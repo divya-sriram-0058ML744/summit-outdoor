@@ -1,0 +1,525 @@
+openapi: 3.0.3
+info:
+  title: Products API
+  description: >
+    Product catalog, inventory, and recommendation API.
+    Supports search, real-time inventory lookup, and personalised recommendations
+    with policy enforcement via x-policies extensions.
+  version: 1.0.0
+  contact:
+    name: API Studio
+    email: apistudio@example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Catalog
+    description: Product search and catalog operations
+  - name: Inventory
+    description: Real-time stock and warehouse operations
+  - name: Recommendations
+    description: Personalised product recommendation operations
+
+paths:
+  /products/search:
+    get:
+      summary: Search Products
+      description: >
+        Search the product catalog. Applies Load Balancing across multiple
+        instances to handle traffic spikes and prevent backend hammering.
+      operationId: searchProducts
+      tags:
+        - Catalog
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search keyword or phrase
+          schema:
+            type: string
+          example: hiking boots
+        - name: category
+          in: query
+          required: false
+          description: Filter by product category
+          schema:
+            type: string
+          example: footwear
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Successful search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSearchResponse'
+              example:
+                total: 42
+                page: 1
+                limit: 20
+                products:
+                  - sku: SKU-1001
+                    name: Summit Trek Boot
+                    category: footwear
+                    price: 149.99
+                    currency: USD
+                    thumbnailUrl: https://cdn.example.com/products/sku-1001.jpg
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      x-policies:
+        - OAuth
+        - Cache
+        - LoadBalance
+
+  /products/{sku}/inventory:
+    get:
+      summary: Check Inventory
+      description: >
+        Returns real-time inventory status for a specific SKU. Applies Retry
+        (warehouse service is flaky) and Circuit Breaker policies to handle
+        downstream instability.
+      operationId: getInventoryBySku
+      tags:
+        - Inventory
+      parameters:
+        - name: sku
+          in: path
+          required: true
+          description: Stock Keeping Unit identifier
+          schema:
+            type: string
+          example: SKU-1001
+        - name: warehouseId
+          in: query
+          required: false
+          description: Filter inventory by a specific warehouse
+          schema:
+            type: string
+          example: WH-EAST-01
+      responses:
+        '200':
+          description: Inventory status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryResponse'
+              example:
+                sku: SKU-1001
+                productName: Summit Trek Boot
+                totalStock: 320
+                availableStock: 285
+                reservedStock: 35
+                warehouses:
+                  - warehouseId: WH-EAST-01
+                    location: Newark, NJ
+                    stock: 180
+                  - warehouseId: WH-WEST-01
+                    location: Reno, NV
+                    stock: 105
+                lastUpdated: '2026-04-06T08:30:00Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+      x-policies:
+        - OAuth
+        - Retry
+        - CircuitBreaker
+
+  /products/recommend:
+    get:
+      summary: Get Product Recommendations
+      description: >
+        Returns personalised product recommendations for a user based on
+        browsing history, purchase history, and optionally a reference SKU
+        for item-to-item similarity. Applies Rate Limiting to prevent abuse
+        and Cache to reduce load on the ML recommendation engine.
+      operationId: getRecommendations
+      tags:
+        - Recommendations
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          description: The ID of the user to generate recommendations for
+          schema:
+            type: string
+          example: USR-9921
+        - name: sku
+          in: query
+          required: false
+          description: >
+            Reference SKU for item-to-item similarity recommendations.
+            When provided, results are biased toward products similar to this item.
+          schema:
+            type: string
+          example: SKU-1001
+        - name: category
+          in: query
+          required: false
+          description: Restrict recommendations to a specific category
+          schema:
+            type: string
+          example: footwear
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of recommendations to return
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 50
+        - name: strategy
+          in: query
+          required: false
+          description: >
+            Recommendation strategy to apply.
+            - collaborative: based on similar users' behaviour
+            - content: based on product attributes
+            - hybrid: blend of collaborative and content (default)
+          schema:
+            type: string
+            enum:
+              - collaborative
+              - content
+              - hybrid
+            default: hybrid
+          example: hybrid
+      responses:
+        '200':
+          description: Recommendations returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationResponse'
+              example:
+                userId: USR-9921
+                strategy: hybrid
+                total: 3
+                recommendations:
+                  - sku: SKU-2045
+                    name: Alpine Hiking Sock
+                    category: footwear
+                    price: 18.99
+                    currency: USD
+                    score: 0.97
+                    reason: Frequently bought with Summit Trek Boot
+                    thumbnailUrl: https://cdn.example.com/products/sku-2045.jpg
+                  - sku: SKU-3310
+                    name: Trail Gaiters Pro
+                    category: footwear
+                    price: 45.00
+                    currency: USD
+                    score: 0.91
+                    reason: Popular in your category
+                    thumbnailUrl: https://cdn.example.com/products/sku-3310.jpg
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      x-policies:
+        - OAuth
+        - RateLimit
+        - Cache
+
+components:
+  schemas:
+
+    # ── Product (shared across search and recommendations) ─────────────────
+    Product:
+      type: object
+      required:
+        - sku
+        - name
+        - category
+        - price
+        - currency
+      properties:
+        sku:
+          type: string
+          description: Stock Keeping Unit identifier
+          example: SKU-1001
+        name:
+          type: string
+          description: Display name of the product
+          example: Summit Trek Boot
+        category:
+          type: string
+          description: Product category
+          example: footwear
+        price:
+          type: number
+          format: float
+          description: Unit price
+          example: 149.99
+        currency:
+          type: string
+          description: ISO 4217 currency code
+          example: USD
+        thumbnailUrl:
+          type: string
+          format: uri
+          description: URL to the product thumbnail image
+          example: https://cdn.example.com/products/sku-1001.jpg
+
+    # ── Product Search Response ─────────────────────────────────────────────
+    ProductSearchResponse:
+      type: object
+      required:
+        - total
+        - page
+        - limit
+        - products
+      properties:
+        total:
+          type: integer
+          description: Total number of matching products across all pages
+          example: 42
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        limit:
+          type: integer
+          description: Number of results per page
+          example: 20
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+
+    # ── Warehouse ──────────────────────────────────────────────────────────
+    WarehouseStock:
+      type: object
+      required:
+        - warehouseId
+        - location
+        - stock
+      properties:
+        warehouseId:
+          type: string
+          example: WH-EAST-01
+        location:
+          type: string
+          example: Newark, NJ
+        stock:
+          type: integer
+          example: 180
+
+    # ── Inventory Response ─────────────────────────────────────────────────
+    InventoryResponse:
+      type: object
+      required:
+        - sku
+        - productName
+        - totalStock
+        - availableStock
+        - reservedStock
+        - warehouses
+        - lastUpdated
+      properties:
+        sku:
+          type: string
+          example: SKU-1001
+        productName:
+          type: string
+          example: Summit Trek Boot
+        totalStock:
+          type: integer
+          example: 320
+        availableStock:
+          type: integer
+          example: 285
+        reservedStock:
+          type: integer
+          example: 35
+        warehouses:
+          type: array
+          items:
+            $ref: '#/components/schemas/WarehouseStock'
+        lastUpdated:
+          type: string
+          format: date-time
+          example: '2026-04-06T08:30:00Z'
+
+    # ── Recommendation Item ────────────────────────────────────────────────
+    RecommendationItem:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          required:
+            - score
+            - reason
+          properties:
+            score:
+              type: number
+              format: float
+              description: Relevance score between 0 and 1
+              minimum: 0
+              maximum: 1
+              example: 0.97
+            reason:
+              type: string
+              description: Human-readable explanation for the recommendation
+              example: Frequently bought with Summit Trek Boot
+
+    # ── Recommendation Response ────────────────────────────────────────────
+    RecommendationResponse:
+      type: object
+      required:
+        - userId
+        - strategy
+        - total
+        - recommendations
+      properties:
+        userId:
+          type: string
+          example: USR-9921
+        strategy:
+          type: string
+          enum:
+            - collaborative
+            - content
+            - hybrid
+          example: hybrid
+        total:
+          type: integer
+          example: 3
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendationItem'
+
+    # ── Error ──────────────────────────────────────────────────────────────
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: INVALID_PARAMETER
+        message:
+          type: string
+          example: Query parameter 'q' is required
+        details:
+          type: array
+          items:
+            type: string
+          example:
+            - "'q' must be a non-empty string"
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: BAD_REQUEST
+            message: Invalid or missing query parameters
+
+    Unauthorized:
+      description: Missing or invalid OAuth token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: UNAUTHORIZED
+            message: Bearer token is missing or expired
+
+    NotFound:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: NOT_FOUND
+            message: SKU 'SKU-9999' does not exist
+
+    TooManyRequests:
+      description: Rate limit exceeded
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: RATE_LIMIT_EXCEEDED
+            message: Too many requests. Please retry after 30 seconds.
+
+    ServiceUnavailable:
+      description: Downstream service temporarily unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: SERVICE_UNAVAILABLE
+            message: Warehouse service is temporarily unavailable. Please retry.
+
+    InternalServerError:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: INTERNAL_ERROR
+            message: An unexpected error occurred
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.example.com/oauth/token
+          scopes:
+            catalog:read: Read access to product catalog
+            inventory:read: Read access to inventory data
+            recommendations:read: Read access to recommendations
+
+security:
+  - OAuth2:
+      - catalog:read
+      - inventory:read
+      - recommendations:read
