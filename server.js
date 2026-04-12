@@ -74,14 +74,21 @@ app.use((err, _req, res, _next) => {
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n Products API running on http://localhost:${PORT}`);
-  console.log(`\n Endpoints:`);
-  console.log(`   GET  http://localhost:${PORT}/products/search?q=hiking`);
-  console.log(`   GET  http://localhost:${PORT}/products/SKU-1001/inventory`);
-  console.log(`   GET  http://localhost:${PORT}/products/recommend?userId=USR-9921`);
-  console.log(`   GET  http://localhost:${PORT}/openapi.yaml`);
-  console.log(``);
-});
+// app.listen(PORT, () => {
+//   console.log(`\n Products API running on http://localhost:${PORT}`);
+//   console.log(`\n Endpoints:`);
+//   console.log(`   GET  http://localhost:${PORT}/products/search?q=hiking`);
+//   console.log(`   GET  http://localhost:${PORT}/products/SKU-1001/inventory`);
+//   console.log(`   GET  http://localhost:${PORT}/products/recommend?userId=USR-9921`);
+//   console.log(`   GET  http://localhost:${PORT}/openapi.yaml`);
+//   console.log(``);
+// });
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Products API running on http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;
