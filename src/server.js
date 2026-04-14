@@ -19,27 +19,6 @@ app.use((req, _res, next) => {
   next();
 });
 
-// Simulated x-policies header logger (shows which policies would fire)
-app.use((req, res, next) => {
-  res.on('finish', () => {
-    const policiesMap = {
-      '/products/search':    ['OAuth', 'Cache', 'LoadBalance'],
-      '/products/recommend': ['OAuth', 'RateLimit', 'Cache'],
-    };
-
-    const matched = Object.entries(policiesMap).find(([path]) =>
-      req.path.startsWith(path)
-    );
-
-    if (matched) {
-      console.log(`  → Policies applied: ${matched[1].join(', ')}`);
-    } else if (req.path.includes('/inventory')) {
-      console.log(`  → Policies applied: OAuth, Retry, CircuitBreaker`);
-    }
-  });
-  next();
-});
-
 // ── Serve OpenAPI spec ────────────────────────────────────────────────────
 app.get('/openapi.yaml', (_req, res) => {
   const specPath = path.join(__dirname, '..', 'openapi.yaml');
