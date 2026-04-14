@@ -20,7 +20,7 @@ const products = [
 
   // ── Footwear ──────────────────────────────────────────────────────────
   {
-    sku:            'SKU1001',
+    sku:            '1001',
     internal_sku:   'INT-FW-1001-BLK',
     name:           'Summit Trek Boot',
     category:       'footwear',
@@ -29,10 +29,10 @@ const products = [
     margin_pct:     61.0,
     supplier_id:    'SUP001',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU1001.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/1001.jpg',
   },
   {
-    sku:            'SKU1002',
+    sku:            '1002',
     internal_sku:   'INT-FW-1002-GRY',
     name:           'Trail Runner X2',
     category:       'footwear',
@@ -41,10 +41,10 @@ const products = [
     margin_pct:     63.3,
     supplier_id:    'SUP001',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU1002.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/1002.jpg',
   },
   {
-    sku:            'SKU1003',
+    sku:            '1003',
     internal_sku:   'INT-FW-1003-TAN',
     name:           'Desert Hiker Low',
     category:       'footwear',
@@ -53,10 +53,10 @@ const products = [
     margin_pct:     64.0,
     supplier_id:    'SUP001',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU1003.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/1003.jpg',
   },
   {
-    sku:            'SKU1004',
+    sku:            '1004',
     internal_sku:   'INT-FW-1004-RED',
     name:           'Mountaineer Pro Boot',
     category:       'footwear',
@@ -65,10 +65,10 @@ const products = [
     margin_pct:     65.0,
     supplier_id:    'SUP005',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU1004.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/1004.jpg',
   },
   {
-    sku:            'SKU2045',
+    sku:            '2045',
     internal_sku:   'INT-FW-2045-WHT',
     name:           'Alpine Hiking Sock',
     category:       'footwear',
@@ -77,10 +77,10 @@ const products = [
     margin_pct:     71.0,
     supplier_id:    'SUP007',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU2045.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/2045.jpg',
   },
   {
-    sku:            'SKU2046',
+    sku:            '2046',
     internal_sku:   'INT-FW-2046-CRB',
     name:           'Compression Trail Sock',
     category:       'footwear',
@@ -89,10 +89,10 @@ const products = [
     margin_pct:     69.6,
     supplier_id:    'SUP007',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU2046.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/2046.jpg',
   },
   {
-    sku:            'SKU3310',
+    sku:            '3310',
     internal_sku:   'INT-FW-3310-BLK',
     name:           'Trail Gaiters Pro',
     category:       'footwear',
@@ -101,10 +101,10 @@ const products = [
     margin_pct:     67.8,
     supplier_id:    'SUP006',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU3310.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/3310.jpg',
   },
   {
-    sku:            'SKU3311',
+    sku:            '3311',
     internal_sku:   'INT-FW-3311-GRN',
     name:           'Waterproof Gaiter Lite',
     category:       'footwear',
@@ -113,12 +113,12 @@ const products = [
     margin_pct:     69.4,
     supplier_id:    'SUP006',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU3311.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/3311.jpg',
   },
 
   // ── Bags ──────────────────────────────────────────────────────────────
   {
-    sku:            'SKU4201',
+    sku:            '4201',
     internal_sku:   'INT-BG-4201-NVY',
     name:           'Waterproof Backpack',
     category:       'bags',
@@ -127,10 +127,10 @@ const products = [
     margin_pct:     64.4,
     supplier_id:    'SUP006',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU4201.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/4201.jpg',
   },
   {
-    sku:            'SKU4202',
+    sku:            '4202',
     internal_sku:   'INT-BG-4202-ORG',
     name:           'Hydration Vest 10L',
     category:       'bags',
@@ -139,10 +139,10 @@ const products = [
     margin_pct:     63.3,
     supplier_id:    'SUP003',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU4202.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/4202.jpg',
   },
   {
-    sku:            'SKU4203',
+    sku:            '4203',
     internal_sku:   'INT-BG-4203-SLT',
     name:           'Ultralight Day Pack 20L',
     category:       'bags',
@@ -151,10 +151,10 @@ const products = [
     margin_pct:     68.3,
     supplier_id:    'SUP006',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU4203.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/4203.jpg',
   },
   {
-    sku:            'SKU4204',
+    sku:            '4204',
     internal_sku:   'INT-BG-4204-TAN',
     name:           'Expedition Pack 65L',
     category:       'bags',
@@ -163,10 +163,10 @@ const products = [
     margin_pct:     62.1,
     supplier_id:    'SUP006',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU4204.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/4204.jpg',
   },
   {
-    sku:            'SKU4205',
+    sku:            '4205',
     internal_sku:   'INT-BG-4205-BLK',
     name:           'Summit Fanny Pack',
     category:       'bags',
@@ -175,12 +175,12 @@ const products = [
     margin_pct:     70.0,
     supplier_id:    'SUP006',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU4205.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/4205.jpg',
   },
 
   // ── Clothing ──────────────────────────────────────────────────────────
   {
-    sku:            'SKU5500',
+    sku:            '5500',
     internal_sku:   'INT-CL-5500-GRY',
     name:           'Merino Base Layer',
     category:       'clothing',
@@ -189,10 +189,10 @@ const products = [
     margin_pct:     66.2,
     supplier_id:    'SUP007',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU5500.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/5500.jpg',
   },
   {
-    sku:            'SKU5501',
+    sku:            '5501',
     internal_sku:   'INT-CL-5501-BLU',
     name:           'Softshell Jacket',
     category:       'clothing',
@@ -201,10 +201,10 @@ const products = [
     margin_pct:     62.9,
     supplier_id:    'SUP004',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU5501.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/5501.jpg',
   },
   {
-    sku:            'SKU5502',
+    sku:            '5502',
     internal_sku:   'INT-CL-5502-RED',
     name:           'Insulated Puffer Vest',
     category:       'clothing',
@@ -213,10 +213,10 @@ const products = [
     margin_pct:     65.3,
     supplier_id:    'SUP004',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU5502.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/5502.jpg',
   },
   {
-    sku:            'SKU5503',
+    sku:            '5503',
     internal_sku:   'INT-CL-5503-GRN',
     name:           'Waterproof Shell Jacket',
     category:       'clothing',
@@ -225,10 +225,10 @@ const products = [
     margin_pct:     62.9,
     supplier_id:    'SUP002',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU5503.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/5503.jpg',
   },
   {
-    sku:            'SKU5504',
+    sku:            '5504',
     internal_sku:   'INT-CL-5504-BLK',
     name:           'Fleece Midlayer Hoodie',
     category:       'clothing',
@@ -237,10 +237,10 @@ const products = [
     margin_pct:     65.9,
     supplier_id:    'SUP004',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU5504.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/5504.jpg',
   },
   {
-    sku:            'SKU5505',
+    sku:            '5505',
     internal_sku:   'INT-CL-5505-KHK',
     name:           'Convertible Hiking Pant',
     category:       'clothing',
@@ -249,10 +249,10 @@ const products = [
     margin_pct:     65.6,
     supplier_id:    'SUP004',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU5505.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/5505.jpg',
   },
   {
-    sku:            'SKU5506',
+    sku:            '5506',
     internal_sku:   'INT-CL-5506-BLU',
     name:           'Sun Hooded Shirt UPF 50',
     category:       'clothing',
@@ -261,12 +261,12 @@ const products = [
     margin_pct:     67.3,
     supplier_id:    'SUP002',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU5506.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/5506.jpg',
   },
 
   // ── Equipment ─────────────────────────────────────────────────────────
   {
-    sku:            'SKU6001',
+    sku:            '6001',
     internal_sku:   'INT-EQ-6001-SLV',
     name:           'Trekking Poles Set',
     category:       'equipment',
@@ -275,10 +275,10 @@ const products = [
     margin_pct:     66.4,
     supplier_id:    'SUP005',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6001.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6001.jpg',
   },
   {
-    sku:            'SKU6002',
+    sku:            '6002',
     internal_sku:   'INT-EQ-6002-BLK',
     name:           'Headlamp 350 Lumen',
     category:       'equipment',
@@ -287,10 +287,10 @@ const products = [
     margin_pct:     70.0,
     supplier_id:    'SUP003',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6002.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6002.jpg',
   },
   {
-    sku:            'SKU6003',
+    sku:            '6003',
     internal_sku:   'INT-EQ-6003-ORG',
     name:           'Emergency Bivvy Bag',
     category:       'equipment',
@@ -299,10 +299,10 @@ const products = [
     margin_pct:     71.6,
     supplier_id:    'SUP008',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6003.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6003.jpg',
   },
   {
-    sku:            'SKU6004',
+    sku:            '6004',
     internal_sku:   'INT-EQ-6004-BLU',
     name:           'Water Filter Straw',
     category:       'equipment',
@@ -311,10 +311,10 @@ const products = [
     margin_pct:     72.0,
     supplier_id:    'SUP008',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6004.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6004.jpg',
   },
   {
-    sku:            'SKU6005',
+    sku:            '6005',
     internal_sku:   'INT-EQ-6005-SLV',
     name:           'Titanium Cook Set',
     category:       'equipment',
@@ -323,10 +323,10 @@ const products = [
     margin_pct:     65.7,
     supplier_id:    'SUP005',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6005.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6005.jpg',
   },
   {
-    sku:            'SKU6006',
+    sku:            '6006',
     internal_sku:   'INT-EQ-6006-RED',
     name:           'First Aid Kit Pro',
     category:       'equipment',
@@ -335,10 +335,10 @@ const products = [
     margin_pct:     68.9,
     supplier_id:    'SUP008',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6006.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6006.jpg',
   },
   {
-    sku:            'SKU6007',
+    sku:            '6007',
     internal_sku:   'INT-EQ-6007-BLK',
     name:           'GPS Navigator Handheld',
     category:       'equipment',
@@ -347,10 +347,10 @@ const products = [
     margin_pct:     64.0,
     supplier_id:    'SUP003',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6007.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6007.jpg',
   },
   {
-    sku:            'SKU6008',
+    sku:            '6008',
     internal_sku:   'INT-EQ-6008-ORG',
     name:           'Solar Charger 10W',
     category:       'equipment',
@@ -359,12 +359,12 @@ const products = [
     margin_pct:     66.7,
     supplier_id:    'SUP003',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU6008.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/6008.jpg',
   },
 
   // ── Nutrition ─────────────────────────────────────────────────────────
   {
-    sku:            'SKU7001',
+    sku:            '7001',
     internal_sku:   'INT-NT-7001-VNL',
     name:           'Trail Mix Energy Bar x12',
     category:       'nutrition',
@@ -373,10 +373,10 @@ const products = [
     margin_pct:     65.2,
     supplier_id:    'SUP008',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU7001.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/7001.jpg',
   },
   {
-    sku:            'SKU7002',
+    sku:            '7002',
     internal_sku:   'INT-NT-7002-CHC',
     name:           'Electrolyte Powder 30 Servings',
     category:       'nutrition',
@@ -385,10 +385,10 @@ const products = [
     margin_pct:     67.1,
     supplier_id:    'SUP008',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU7002.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/7002.jpg',
   },
   {
-    sku:            'SKU7003',
+    sku:            '7003',
     internal_sku:   'INT-NT-7003-STR',
     name:           'Freeze Dried Meal Pack x4',
     category:       'nutrition',
@@ -397,14 +397,14 @@ const products = [
     margin_pct:     64.0,
     supplier_id:    'SUP008',
     currency:       'USD',
-    thumbnailUrl:   'https://cdn.example.com/products/SKU7003.jpg',
+    thumbnailUrl:   'https://cdn.example.com/products/7003.jpg',
   },
 ];
 
 // ── Inventory ──────────────────────────────────────────────────────────────
 const inventory = {
-  'SKU1001': {
-    sku: 'SKU1001', productName: 'Summit Trek Boot',
+  '1001': {
+    sku: '1001', productName: 'Summit Trek Boot',
     totalStock: 320, availableStock: 285, reservedStock: 35,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 180 },
@@ -412,8 +412,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T08:30:00Z',
   },
-  'SKU1002': {
-    sku: 'SKU1002', productName: 'Trail Runner X2',
+  '1002': {
+    sku: '1002', productName: 'Trail Runner X2',
     totalStock: 140, availableStock: 120, reservedStock: 20,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 80  },
@@ -421,8 +421,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T09:00:00Z',
   },
-  'SKU1003': {
-    sku: 'SKU1003', productName: 'Desert Hiker Low',
+  '1003': {
+    sku: '1003', productName: 'Desert Hiker Low',
     totalStock: 90, availableStock: 85, reservedStock: 5,
     warehouses: [
       { warehouseId: 'WH-WEST-01', location: 'Reno, NV',      stock: 55  },
@@ -430,8 +430,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T10:00:00Z',
   },
-  'SKU1004': {
-    sku: 'SKU1004', productName: 'Mountaineer Pro Boot',
+  '1004': {
+    sku: '1004', productName: 'Mountaineer Pro Boot',
     totalStock: 45, availableStock: 40, reservedStock: 5,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 25  },
@@ -439,8 +439,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T11:00:00Z',
   },
-  'SKU2045': {
-    sku: 'SKU2045', productName: 'Alpine Hiking Sock',
+  '2045': {
+    sku: '2045', productName: 'Alpine Hiking Sock',
     totalStock: 950, availableStock: 910, reservedStock: 40,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 500 },
@@ -448,8 +448,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T07:15:00Z',
   },
-  'SKU2046': {
-    sku: 'SKU2046', productName: 'Compression Trail Sock',
+  '2046': {
+    sku: '2046', productName: 'Compression Trail Sock',
     totalStock: 620, availableStock: 595, reservedStock: 25,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 320 },
@@ -457,8 +457,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T08:00:00Z',
   },
-  'SKU3310': {
-    sku: 'SKU3310', productName: 'Trail Gaiters Pro',
+  '3310': {
+    sku: '3310', productName: 'Trail Gaiters Pro',
     totalStock: 210, availableStock: 195, reservedStock: 15,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 110 },
@@ -466,8 +466,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T12:00:00Z',
   },
-  'SKU4201': {
-    sku: 'SKU4201', productName: 'Waterproof Backpack',
+  '4201': {
+    sku: '4201', productName: 'Waterproof Backpack',
     totalStock: 180, availableStock: 160, reservedStock: 20,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 100 },
@@ -475,8 +475,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T13:00:00Z',
   },
-  'SKU4202': {
-    sku: 'SKU4202', productName: 'Hydration Vest 10L',
+  '4202': {
+    sku: '4202', productName: 'Hydration Vest 10L',
     totalStock: 130, availableStock: 115, reservedStock: 15,
     warehouses: [
       { warehouseId: 'WH-WEST-01', location: 'Reno, NV',      stock: 75  },
@@ -484,8 +484,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T09:30:00Z',
   },
-  'SKU4203': {
-    sku: 'SKU4203', productName: 'Ultralight Day Pack 20L',
+  '4203': {
+    sku: '4203', productName: 'Ultralight Day Pack 20L',
     totalStock: 240, availableStock: 225, reservedStock: 15,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 130 },
@@ -493,8 +493,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T10:15:00Z',
   },
-  'SKU5500': {
-    sku: 'SKU5500', productName: 'Merino Base Layer',
+  '5500': {
+    sku: '5500', productName: 'Merino Base Layer',
     totalStock: 310, availableStock: 290, reservedStock: 20,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 160 },
@@ -502,8 +502,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T14:00:00Z',
   },
-  'SKU5501': {
-    sku: 'SKU5501', productName: 'Softshell Jacket',
+  '5501': {
+    sku: '5501', productName: 'Softshell Jacket',
     totalStock: 95, availableStock: 80, reservedStock: 15,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 50  },
@@ -511,8 +511,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T15:00:00Z',
   },
-  'SKU5503': {
-    sku: 'SKU5503', productName: 'Waterproof Shell Jacket',
+  '5503': {
+    sku: '5503', productName: 'Waterproof Shell Jacket',
     totalStock: 60, availableStock: 55, reservedStock: 5,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 35  },
@@ -520,8 +520,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T11:30:00Z',
   },
-  'SKU6001': {
-    sku: 'SKU6001', productName: 'Trekking Poles Set',
+  '6001': {
+    sku: '6001', productName: 'Trekking Poles Set',
     totalStock: 175, availableStock: 160, reservedStock: 15,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 90  },
@@ -529,8 +529,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T16:00:00Z',
   },
-  'SKU6002': {
-    sku: 'SKU6002', productName: 'Headlamp 350 Lumen',
+  '6002': {
+    sku: '6002', productName: 'Headlamp 350 Lumen',
     totalStock: 400, availableStock: 375, reservedStock: 25,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 200 },
@@ -539,8 +539,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-06T17:00:00Z',
   },
-  'SKU6007': {
-    sku: 'SKU6007', productName: 'GPS Navigator Handheld',
+  '6007': {
+    sku: '6007', productName: 'GPS Navigator Handheld',
     totalStock: 35, availableStock: 30, reservedStock: 5,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 20  },
@@ -548,8 +548,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T12:00:00Z',
   },
-  'SKU7001': {
-    sku: 'SKU7001', productName: 'Trail Mix Energy Bar x12',
+  '7001': {
+    sku: '7001', productName: 'Trail Mix Energy Bar x12',
     totalStock: 800, availableStock: 775, reservedStock: 25,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 400 },
@@ -558,8 +558,8 @@ const inventory = {
     ],
     lastUpdated: '2026-04-07T06:00:00Z',
   },
-  'SKU7002': {
-    sku: 'SKU7002', productName: 'Electrolyte Powder 30 Servings',
+  '7002': {
+    sku: '7002', productName: 'Electrolyte Powder 30 Servings',
     totalStock: 550, availableStock: 520, reservedStock: 30,
     warehouses: [
       { warehouseId: 'WH-EAST-01', location: 'Newark, NJ',    stock: 280 },
@@ -571,43 +571,43 @@ const inventory = {
 
 // ── Item-to-item similarity map ────────────────────────────────────────────
 const similarItems = {
-  'SKU1001': [
-    { sku: 'SKU2045', score: 0.97, reason: 'Frequently bought with Summit Trek Boot' },
-    { sku: 'SKU3310', score: 0.91, reason: 'Popular in your category' },
-    { sku: 'SKU1002', score: 0.85, reason: 'Similar style and use case' },
-    { sku: 'SKU6001', score: 0.78, reason: 'Commonly paired with hiking boots' },
-    { sku: 'SKU2046', score: 0.74, reason: 'Also bought by Summit Trek Boot customers' },
-    { sku: 'SKU5505', score: 0.70, reason: 'Complete your hiking outfit' },
+  '1001': [
+    { sku: '2045', score: 0.97, reason: 'Frequently bought with Summit Trek Boot' },
+    { sku: '3310', score: 0.91, reason: 'Popular in your category' },
+    { sku: '1002', score: 0.85, reason: 'Similar style and use case' },
+    { sku: '6001', score: 0.78, reason: 'Commonly paired with hiking boots' },
+    { sku: '2046', score: 0.74, reason: 'Also bought by Summit Trek Boot customers' },
+    { sku: '5505', score: 0.70, reason: 'Complete your hiking outfit' },
   ],
-  'SKU1002': [
-    { sku: 'SKU2046', score: 0.95, reason: 'Best sock for trail running' },
-    { sku: 'SKU4202', score: 0.89, reason: 'Hydration vest pairs with trail runners' },
-    { sku: 'SKU7002', score: 0.82, reason: 'Frequently bought together for trail runs' },
-    { sku: 'SKU6002', score: 0.75, reason: 'Popular for early morning runs' },
+  '1002': [
+    { sku: '2046', score: 0.95, reason: 'Best sock for trail running' },
+    { sku: '4202', score: 0.89, reason: 'Hydration vest pairs with trail runners' },
+    { sku: '7002', score: 0.82, reason: 'Frequently bought together for trail runs' },
+    { sku: '6002', score: 0.75, reason: 'Popular for early morning runs' },
   ],
-  'SKU4201': [
-    { sku: 'SKU4202', score: 0.95, reason: 'Frequently bought together' },
-    { sku: 'SKU6002', score: 0.88, reason: 'Essential for the same activity' },
-    { sku: 'SKU5500', score: 0.80, reason: 'Customers who bought this also viewed' },
-    { sku: 'SKU4203', score: 0.76, reason: 'Customers also considered this pack' },
-    { sku: 'SKU6006', score: 0.70, reason: 'Safety essential for backpackers' },
+  '4201': [
+    { sku: '4202', score: 0.95, reason: 'Frequently bought together' },
+    { sku: '6002', score: 0.88, reason: 'Essential for the same activity' },
+    { sku: '5500', score: 0.80, reason: 'Customers who bought this also viewed' },
+    { sku: '4203', score: 0.76, reason: 'Customers also considered this pack' },
+    { sku: '6006', score: 0.70, reason: 'Safety essential for backpackers' },
   ],
-  'SKU5503': [
-    { sku: 'SKU5500', score: 0.93, reason: 'Ideal base layer under shell jacket' },
-    { sku: 'SKU5504', score: 0.89, reason: 'Layer system — fleece mid + shell' },
-    { sku: 'SKU5505', score: 0.82, reason: 'Complete the alpine outfit' },
-    { sku: 'SKU1004', score: 0.76, reason: 'Popular combo for mountaineering' },
+  '5503': [
+    { sku: '5500', score: 0.93, reason: 'Ideal base layer under shell jacket' },
+    { sku: '5504', score: 0.89, reason: 'Layer system — fleece mid + shell' },
+    { sku: '5505', score: 0.82, reason: 'Complete the alpine outfit' },
+    { sku: '1004', score: 0.76, reason: 'Popular combo for mountaineering' },
   ],
-  'SKU6007': [
-    { sku: 'SKU6008', score: 0.91, reason: 'Keep it charged on long expeditions' },
-    { sku: 'SKU4204', score: 0.85, reason: 'Expedition gear bundle' },
-    { sku: 'SKU6002', score: 0.79, reason: 'Navigation + lighting essentials' },
-    { sku: 'SKU7003', score: 0.73, reason: 'Multi-day trip essentials' },
+  '6007': [
+    { sku: '6008', score: 0.91, reason: 'Keep it charged on long expeditions' },
+    { sku: '4204', score: 0.85, reason: 'Expedition gear bundle' },
+    { sku: '6002', score: 0.79, reason: 'Navigation + lighting essentials' },
+    { sku: '7003', score: 0.73, reason: 'Multi-day trip essentials' },
   ],
-  'SKU7001': [
-    { sku: 'SKU7002', score: 0.94, reason: 'Perfect nutrition combo for trail days' },
-    { sku: 'SKU7003', score: 0.87, reason: 'Complete trail nutrition pack' },
-    { sku: 'SKU4202', score: 0.72, reason: 'Hydration + fuel for long runs' },
+  '7001': [
+    { sku: '7002', score: 0.94, reason: 'Perfect nutrition combo for trail days' },
+    { sku: '7003', score: 0.87, reason: 'Complete trail nutrition pack' },
+    { sku: '4202', score: 0.72, reason: 'Hydration + fuel for long runs' },
   ],
 };
 
@@ -615,23 +615,23 @@ const similarItems = {
 const userProfiles = {
   'USR-9921': {
     preferredCategories: ['footwear', 'equipment'],
-    recentSkus: ['SKU1001', 'SKU6002'],
+    recentSkus: ['1001', '6002'],
   },
   'USR-1234': {
     preferredCategories: ['clothing', 'bags'],
-    recentSkus: ['SKU5500', 'SKU4201'],
+    recentSkus: ['5500', '4201'],
   },
   'USR-5577': {
     preferredCategories: ['equipment', 'nutrition'],
-    recentSkus: ['SKU6007', 'SKU7001', 'SKU6004'],
+    recentSkus: ['6007', '7001', '6004'],
   },
   'USR-8833': {
     preferredCategories: ['footwear', 'clothing', 'bags'],
-    recentSkus: ['SKU1004', 'SKU5503', 'SKU4204'],
+    recentSkus: ['1004', '5503', '4204'],
   },
   'USR-3345': {
     preferredCategories: ['nutrition', 'equipment'],
-    recentSkus: ['SKU7002', 'SKU7003'],
+    recentSkus: ['7002', '7003'],
   },
 };
 
