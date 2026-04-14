@@ -10,6 +10,7 @@ const { inventory } = require('../../data/store');
 router.get('/:sku/inventory', (req, res) => {
   const { sku }         = req.params;
   const { warehouseId } = req.query;
+  console.log('Request headers:', req.headers);
 
   // ── Normalize SKU ───────────────────────────────────────────────────────
   // Strip any SKU prefix so all these resolve to '1001':
