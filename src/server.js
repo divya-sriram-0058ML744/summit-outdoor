@@ -45,7 +45,13 @@ app.use((_req, res) => {
 
 // ── Global error handler ──────────────────────────────────────────────────
 app.use((err, _req, res, _next) => {
-  console.error('[ERROR]', err);
+  // Enhanced logging: message, stack trace, and error object
+  console.error('[ERROR DETAILS]');
+  console.error('Message:', err.message);
+  console.error('Stack:', err.stack);
+  console.error('Full error:', err);
+  console.error('[END ERROR]');
+
   res.status(500).json({
     code:    'INTERNAL_ERROR',
     message: 'An unexpected error occurred',
