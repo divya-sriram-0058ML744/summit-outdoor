@@ -51,6 +51,7 @@ router.get('/:sku/inventory', (req, res) => {
       warehouses:     [wh],
     });
   }
+      console.log('Success:');
 
   return res.status(200).json(record);
 });
