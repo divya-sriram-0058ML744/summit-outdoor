@@ -21,11 +21,15 @@ router.get('/:sku/inventory', (req, res) => {
 
   // ── Lookup ──────────────────────────────────────────────────────────────
   const record = inventory[normalizedSku];
+  
   if (!record) {
+    console.log('Record NOT found:');
     return res.status(404).json({
       code:    'NOT_FOUND',
       message: `SKU '${sku}' does not exist`,
     });
+  } else {
+      console.log('Record found:', record);
   }
 
   // ── Optional warehouse filter ───────────────────────────────────────────
