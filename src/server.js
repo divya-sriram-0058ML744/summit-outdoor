@@ -6,6 +6,7 @@ const fs      = require('fs');
 const searchRouter    = require('./routes/search');
 const inventoryRouter = require('./routes/inventory');
 const recommendRouter = require('./routes/recommend');
+const reviewsRouter = require('./routes/reviews');
 
 const app  = express();
 const PORT = process.env.PORT || 8080;
@@ -34,6 +35,7 @@ app.get('/openapi.yaml', (_req, res) => {
 app.use('/products/search',    searchRouter);
 app.use('/products/recommend', recommendRouter);
 app.use('/products',           inventoryRouter);  // handles /:sku/inventory
+app.use('/store',              reviewsRouter);
 
 // ── 404 fallback ──────────────────────────────────────────────────────────
 app.use((_req, res) => {
