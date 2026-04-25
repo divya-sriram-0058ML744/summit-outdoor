@@ -4,10 +4,8 @@
  * Multi-operation endpoint for reading, submitting, and moderating
  * customer gear reviews.
  *
- * Policies applied (mirrors x-policies in openapi.yaml):
- *   GET    – OAuth (read scope), Cache, inventory check with try/throw → 503 + Retry-After
- *   POST   – OAuth (write scope), Parse (JSON body), Validate (rating 1-5, body, SKU)
- *   DELETE – OAuth (admin scope), moderation removal path
+ * Auth: none enforced at the server level for now — OAuth (reviews:read,
+ *       reviews:write, reviews:admin scopes) will be added later.
  */
 
 const express = require('express');
@@ -33,20 +31,6 @@ function loadProducts() {
   }
 }
 
-// ─── OAuth guard ──────────────────────────────────────────────────────────────
-// In this static demo the gateway would enforce tokens; here we simulate the
-// check by inspecting the Authorization header and rejecting anything missing.
-
-function requireOAuth(res) {
-  // Real enforcement is gateway-side. This guard documents the contract.
-  // For the demo server we always pass — the gateway policy carries the weight.
-  return true;
-}
-
-function bearerPresent(req) {
-  const auth = req.headers['authorization'] || '';
-  return auth.toLowerCase().startsWith('bearer ');
-}
 
 // ─── simulated inventory lookup ───────────────────────────────────────────────
 // Mirrors the flaky warehouse behaviour from /products/{sku}/inventory.
@@ -74,29 +58,22 @@ function fetchInventoryForSku(sku) {
 
 router.route('/reviews')
 
-  // ── GET – search / fetch reviews ──────────────────────────────────────────
+  // ── GET – search / fetch reviews ─────────────────────────────────────────
+  // Public in the demo. Gateway enforces reviews:read OAuth scope in production.
   .get(async (req, res) => {
-    // OAuth: read access required
-    if (!bearerPresent(req)) {
-      return res.status(401).json({
-        code: 'UNAUTHORIZED',
-        message: 'Bearer token is missing or expired',
-      });
-    }
-
     const { sku, userId, status = 'approved', page = 1, limit = 20 } = req.query;
 
     let reviews = loadReviews();
 
     // filter
-    if (sku) reviews = reviews.filter((r) => r.sku === sku);
+    if (sku)    reviews = reviews.filter((r) => r.sku === sku);
     if (userId) reviews = reviews.filter((r) => r.userId === userId);
     reviews = reviews.filter((r) => r.status === status);
 
-    // try/throw – inventory lookup for the requested SKU
-    // If the SKU resolves in our catalog but the warehouse service times out
-    // we throw a structured 503 with a Retry-After header rather than letting
-    // a raw timeout bubble up.
+    // try/throw – inventory lookup when a SKU filter is present.
+    // If the SKU resolves in the catalog but the warehouse service times out,
+    // throw a structured 503 + Retry-After rather than letting the raw
+    // timeout bubble up to the client.
     if (sku) {
       try {
         const inventory = await fetchInventoryForSku(sku);
@@ -106,14 +83,14 @@ router.route('/reviews')
             message: `SKU '${sku}' does not exist`,
           });
         }
-        // attach lightweight inventory hint to the response envelope
-        const pageNum = parseInt(page, 10);
+
+        const pageNum  = parseInt(page,  10);
         const pageSize = parseInt(limit, 10);
-        const start = (pageNum - 1) * pageSize;
+        const start    = (pageNum - 1) * pageSize;
 
         return res.status(200).json({
           total: reviews.length,
-          page: pageNum,
+          page:  pageNum,
           limit: pageSize,
           sku,
           inventory,
@@ -127,18 +104,18 @@ router.route('/reviews')
             message: 'Warehouse service is temporarily unavailable. Please retry.',
           });
         }
-        throw err; // unexpected – let Express error handler catch it
+        throw err;
       }
     }
 
     // no SKU filter – plain paginated response, no inventory lookup needed
-    const pageNum = parseInt(page, 10);
+    const pageNum  = parseInt(page,  10);
     const pageSize = parseInt(limit, 10);
-    const start = (pageNum - 1) * pageSize;
+    const start    = (pageNum - 1) * pageSize;
 
     return res.status(200).json({
       total: reviews.length,
-      page: pageNum,
+      page:  pageNum,
       limit: pageSize,
       reviews: reviews.slice(start, start + pageSize),
     });
@@ -146,19 +123,12 @@ router.route('/reviews')
 
   // ── POST – submit a new review ────────────────────────────────────────────
   .post((req, res) => {
-    // OAuth: write access required
-    if (!bearerPresent(req)) {
-      return res.status(401).json({
-        code: 'UNAUTHORIZED',
-        message: 'Bearer token is missing or expired',
       });
-    }
 
-    // Parse: body must be present JSON (Express json() middleware handles this;
-    // if content-type is wrong Express 5 will have already rejected it)
+    // Parse: body must be present JSON (Express json() middleware handles this)
     const { sku, userId, rating, body } = req.body ?? {};
 
-    // Validate: rating 1–5, body non-empty, product SKU must exist
+    // Validate: rating 1–5 integer, body non-empty, SKU must exist in catalog
     const validationErrors = [];
 
     if (rating === undefined || rating === null) {
@@ -195,15 +165,14 @@ router.route('/reviews')
       });
     }
 
-    // Persist (in-memory for static demo — write back to JSON file)
     const reviews = loadReviews();
     const newReview = {
       reviewId: `REV-${String(reviews.length + 1).padStart(4, '0')}`,
       sku,
       userId,
-      rating: Number(rating),
-      body: body.trim(),
-      status: 'approved',
+      rating:    Number(rating),
+      body:      body.trim(),
+      status:    'approved',
       createdAt: new Date().toISOString(),
     };
     reviews.push(newReview);
@@ -214,13 +183,7 @@ router.route('/reviews')
 
   // ── DELETE – moderation removal ───────────────────────────────────────────
   .delete((req, res) => {
-    // OAuth: admin/moderation scope required
-    if (!bearerPresent(req)) {
-      return res.status(401).json({
-        code: 'UNAUTHORIZED',
-        message: 'Bearer token is missing or expired',
       });
-    }
 
     const { reviewId } = req.query;
 
@@ -247,7 +210,7 @@ router.route('/reviews')
 
     return res.status(200).json({
       reviewId,
-      status: 'removed',
+      status:  'removed',
       message: 'Review has been removed by a moderator',
     });
   });
