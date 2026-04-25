@@ -31,7 +31,6 @@ function loadProducts() {
   }
 }
 
-
 // ─── simulated inventory lookup ───────────────────────────────────────────────
 // Mirrors the flaky warehouse behaviour from /products/{sku}/inventory.
 // 20 % of the time we pretend the warehouse service timed out so the demo
@@ -46,7 +45,6 @@ function fetchInventoryForSku(sku) {
         err.code = 'WAREHOUSE_TIMEOUT';
         return reject(err);
       }
-
       const products = loadProducts();
       const product = products.find((p) => p.sku === sku);
       resolve(product ? { sku, inStock: true } : null);
@@ -58,14 +56,12 @@ function fetchInventoryForSku(sku) {
 
 router.route('/reviews')
 
-  // ── GET – search / fetch reviews ─────────────────────────────────────────
-  // Public in the demo. Gateway enforces reviews:read OAuth scope in production.
+  // ── GET – search / fetch reviews ──────────────────────────────────────────
   .get(async (req, res) => {
     const { sku, userId, status = 'approved', page = 1, limit = 20 } = req.query;
 
     let reviews = loadReviews();
 
-    // filter
     if (sku)    reviews = reviews.filter((r) => r.sku === sku);
     if (userId) reviews = reviews.filter((r) => r.userId === userId);
     reviews = reviews.filter((r) => r.status === status);
@@ -83,11 +79,9 @@ router.route('/reviews')
             message: `SKU '${sku}' does not exist`,
           });
         }
-
         const pageNum  = parseInt(page,  10);
         const pageSize = parseInt(limit, 10);
         const start    = (pageNum - 1) * pageSize;
-
         return res.status(200).json({
           total: reviews.length,
           page:  pageNum,
@@ -108,7 +102,6 @@ router.route('/reviews')
       }
     }
 
-    // no SKU filter – plain paginated response, no inventory lookup needed
     const pageNum  = parseInt(page,  10);
     const pageSize = parseInt(limit, 10);
     const start    = (pageNum - 1) * pageSize;
@@ -123,12 +116,8 @@ router.route('/reviews')
 
   // ── POST – submit a new review ────────────────────────────────────────────
   .post((req, res) => {
-      });
-
-    // Parse: body must be present JSON (Express json() middleware handles this)
     const { sku, userId, rating, body } = req.body ?? {};
 
-    // Validate: rating 1–5 integer, body non-empty, SKU must exist in catalog
     const validationErrors = [];
 
     if (rating === undefined || rating === null) {
@@ -146,7 +135,7 @@ router.route('/reviews')
     } else {
       const products = loadProducts();
       const skuExists =
-        products.length === 0 || // demo: pass when no product fixture present
+        products.length === 0 ||
         products.some((p) => p.sku === sku);
       if (!skuExists) {
         validationErrors.push(`SKU '${sku}' does not exist in the product catalog`);
@@ -167,7 +156,7 @@ router.route('/reviews')
 
     const reviews = loadReviews();
     const newReview = {
-      reviewId: `REV-${String(reviews.length + 1).padStart(4, '0')}`,
+      reviewId:  `REV-${String(reviews.length + 1).padStart(4, '0')}`,
       sku,
       userId,
       rating:    Number(rating),
@@ -183,8 +172,6 @@ router.route('/reviews')
 
   // ── DELETE – moderation removal ───────────────────────────────────────────
   .delete((req, res) => {
-      });
-
     const { reviewId } = req.query;
 
     if (!reviewId) {
@@ -204,7 +191,6 @@ router.route('/reviews')
       });
     }
 
-    // Soft-delete: mark as removed rather than splicing out
     reviews[idx].status = 'removed';
     fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2));
 
