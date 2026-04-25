@@ -1,0 +1,725 @@
+openapi: 3.0.3
+
+info:
+  title: Product Reviews & Inventory Search API
+  description: >
+    A multi-operation endpoint that handles reading, submitting, and moderating
+    customer gear reviews.
+
+
+    ## Operation Overview
+
+
+    | Method   | Flow                  | Key Policies                        |
+    |----------|-----------------------|-------------------------------------|
+    | `GET`    | Search / fetch        | OAuth, Cache                        |
+    | `POST`   | Submit review         | OAuth, Parse, Validate              |
+    | `DELETE` | Moderation removal    | OAuth                               |
+
+
+    ## Inventory Check on GET
+
+
+    When a `sku` query parameter is supplied, the endpoint performs a downstream
+    inventory lookup. If the SKU resolves in the product catalog but the warehouse
+    service times out, the gateway throws a structured **503** with a `Retry-After`
+    header rather than letting a raw timeout bubble up to the client.
+
+
+    ## Validation Rules (POST)
+
+
+    - `rating` — integer, 1–5 (inclusive), required
+    - `body` — non-empty string, required
+    - `sku` — must reference an existing product in the catalog, required
+    - `userId` — required
+
+  version: 1.0.0
+  contact:
+    name: Summit Outdoor API Team
+    email: apistudio@example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://project-43b69.vercel.app
+    description: Vercel production
+
+tags:
+  - name: Reviews
+    description: >
+      Product review operations — reading, submitting, and moderating
+      customer gear reviews.
+
+paths:
+  /store/reviews:
+
+    # ── GET ──────────────────────────────────────────────────────────────────
+    get:
+      summary: Search / Fetch Reviews
+      description: >
+        Returns a paginated list of reviews filtered by status (default:
+        `approved`). When a `sku` filter is provided the endpoint also performs
+        a downstream inventory check via the warehouse service.
+
+
+        **Operation switch** — `GET` routes to the search/fetch flow: filter
+        → optional inventory lookup → paginate → respond.
+
+
+        **Inventory try/throw** — if the SKU resolves in the catalog but the
+        warehouse service times out, the gateway throws a structured `503` with
+        a `Retry-After` header instead of surfacing a raw timeout.
+      operationId: getReviews
+      tags:
+        - Reviews
+      parameters:
+        - name: sku
+          in: query
+          required: false
+          description: >
+            Filter reviews by product SKU. Also triggers an inventory lookup
+            against the warehouse service.
+          schema:
+            type: string
+            example: SKU-1001
+        - name: userId
+          in: query
+          required: false
+          description: Filter reviews submitted by a specific user.
+          schema:
+            type: string
+            example: USR-9921
+        - name: status
+          in: query
+          required: false
+          description: Moderation status to filter on.
+          schema:
+            type: string
+            enum:
+              - approved
+              - removed
+            default: approved
+            example: approved
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Reviews retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewSearchResponse'
+              examples:
+                FilterBySku:
+                  summary: GET /store/reviews?sku=SKU-1001
+                  description: >
+                    SKU filter supplied — response includes the `inventory` hint
+                    alongside matching reviews.
+                  value:
+                    total: 2
+                    page: 1
+                    limit: 20
+                    sku: SKU-1001
+                    inventory:
+                      sku: SKU-1001
+                      inStock: true
+                    reviews:
+                      - reviewId: REV-0001
+                        sku: SKU-1001
+                        userId: USR-9921
+                        rating: 5
+                        body: >-
+                          These boots handled every trail I threw at them. Ankles
+                          stayed supported on loose scree and my feet stayed dry
+                          through two stream crossings.
+                        status: approved
+                        createdAt: '2026-03-10T11:24:00Z'
+                      - reviewId: REV-0002
+                        sku: SKU-1001
+                        userId: USR-4412
+                        rating: 4
+                        body: >-
+                          Solid boot, broke in faster than expected. Toe box is
+                          slightly narrow for wide feet — size up half a size.
+                        status: approved
+                        createdAt: '2026-03-18T09:05:00Z'
+                AllApproved:
+                  summary: GET /store/reviews
+                  description: >
+                    No filters — returns all approved reviews paginated.
+                    No `inventory` or `sku` fields in the envelope.
+                  value:
+                    total: 4
+                    page: 1
+                    limit: 20
+                    reviews:
+                      - reviewId: REV-0001
+                        sku: SKU-1001
+                        userId: USR-9921
+                        rating: 5
+                        body: >-
+                          These boots handled every trail I threw at them.
+                        status: approved
+                        createdAt: '2026-03-10T11:24:00Z'
+                      - reviewId: REV-0002
+                        sku: SKU-1001
+                        userId: USR-4412
+                        rating: 4
+                        body: >-
+                          Solid boot, broke in faster than expected. Toe box is
+                          slightly narrow for wide feet — size up half a size.
+                        status: approved
+                        createdAt: '2026-03-18T09:05:00Z'
+                      - reviewId: REV-0003
+                        sku: SKU-2045
+                        userId: USR-7703
+                        rating: 5
+                        body: >-
+                          Best hiking socks I have owned. No blisters on a 3-day trek.
+                        status: approved
+                        createdAt: '2026-04-01T14:30:00Z'
+                      - reviewId: REV-0004
+                        sku: SKU-3310
+                        userId: USR-1155
+                        rating: 3
+                        body: >-
+                          Gaiters fit well but the velcro started peeling after a few uses.
+                        status: approved
+                        createdAt: '2026-04-05T07:48:00Z'
+                FilterByUser:
+                  summary: GET /store/reviews?userId=USR-9921
+                  description: >
+                    User filter — returns only reviews submitted by USR-9921.
+                  value:
+                    total: 1
+                    page: 1
+                    limit: 20
+                    reviews:
+                      - reviewId: REV-0001
+                        sku: SKU-1001
+                        userId: USR-9921
+                        rating: 5
+                        body: >-
+                          These boots handled every trail I threw at them.
+                        status: approved
+                        createdAt: '2026-03-10T11:24:00Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Missing or invalid OAuth bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                MissingToken:
+                  summary: No Authorization header
+                  value:
+                    code: UNAUTHORIZED
+                    message: Bearer token is missing or expired
+        '404':
+          description: SKU not found in the product catalog
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                SkuNotFound:
+                  summary: Requested SKU does not exist
+                  value:
+                    code: NOT_FOUND
+                    message: "SKU 'SKU-9999' does not exist"
+        '503':
+          description: Warehouse service timed out during inventory lookup
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying
+              schema:
+                type: integer
+                example: 30
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                WarehouseTimeout:
+                  summary: Inventory lookup timed out — retry after 30 s
+                  value:
+                    code: SERVICE_UNAVAILABLE
+                    message: Warehouse service is temporarily unavailable. Please retry.
+      security:
+        - OAuth2:
+            - reviews:read
+      x-policies:
+        - OAuth
+        - Cache
+
+    # ── POST ─────────────────────────────────────────────────────────────────
+    post:
+      summary: Submit a Review
+      description: >
+        Accepts and persists a new customer review for a product.
+
+
+        **Operation switch** — `POST` routes to the submission flow: parse →
+        validate → persist → respond.
+
+
+        **Parse** deserialises the inbound JSON body.
+
+
+        **Validate** enforces the review schema:
+        - `rating` must be an integer between 1 and 5
+        - `body` must be a non-empty string
+        - `sku` must reference an existing product in the catalog
+
+
+        OAuth enforces that only authenticated members can `POST`.
+      operationId: createReview
+      tags:
+        - Reviews
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewInput'
+            examples:
+              ValidReview:
+                summary: Valid 5-star review
+                value:
+                  sku: SKU-1001
+                  userId: USR-9921
+                  rating: 5
+                  body: Best boots I have ever owned. Highly recommended for technical terrain.
+              MinimalReview:
+                summary: Valid 1-star review (minimum rating)
+                value:
+                  sku: SKU-3310
+                  userId: USR-1155
+                  rating: 1
+                  body: Velcro gave out after two uses. Would not buy again.
+              InvalidMissingBody:
+                summary: Invalid — body omitted (triggers 400)
+                value:
+                  sku: SKU-1001
+                  userId: USR-9921
+                  rating: 4
+              InvalidRatingOutOfRange:
+                summary: Invalid — rating out of range (triggers 400)
+                value:
+                  sku: SKU-1001
+                  userId: USR-9921
+                  rating: 7
+                  body: Great product.
+      responses:
+        '201':
+          description: Review submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+              examples:
+                Created:
+                  summary: Newly persisted review
+                  value:
+                    reviewId: REV-0006
+                    sku: SKU-1001
+                    userId: USR-9921
+                    rating: 5
+                    body: Best boots I have ever owned. Highly recommended for technical terrain.
+                    status: approved
+                    createdAt: '2026-04-25T10:00:00Z'
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                MissingBody:
+                  summary: body field omitted
+                  value:
+                    code: BAD_REQUEST
+                    message: Review validation failed
+                    details:
+                      - "'body' is required and must be a non-empty string"
+                RatingOutOfRange:
+                  summary: rating not between 1 and 5
+                  value:
+                    code: BAD_REQUEST
+                    message: Review validation failed
+                    details:
+                      - "'rating' must be an integer between 1 and 5"
+                UnknownSku:
+                  summary: SKU not found in catalog
+                  value:
+                    code: BAD_REQUEST
+                    message: Review validation failed
+                    details:
+                      - "SKU 'SKU-9999' does not exist in the product catalog"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - OAuth2:
+            - reviews:write
+      x-policies:
+        - OAuth
+        - Parse
+        - Validate
+
+    # ── DELETE ───────────────────────────────────────────────────────────────
+    delete:
+      summary: Remove a Review (Moderation)
+      description: >
+        Soft-deletes a review by marking its status as `removed`. Intended
+        for moderator use only.
+
+
+        **Operation switch** — `DELETE` routes to the moderation removal path,
+        which has its own downstream logic (audit log, notification) separate
+        from the POST submission flow.
+
+
+        OAuth enforces that only authenticated members with admin scope can
+        `DELETE`.
+      operationId: deleteReview
+      tags:
+        - Reviews
+      parameters:
+        - name: reviewId
+          in: query
+          required: true
+          description: Unique identifier of the review to remove.
+          schema:
+            type: string
+            example: REV-0005
+      responses:
+        '200':
+          description: Review removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewModerationResponse'
+              examples:
+                Removed:
+                  summary: Spam review successfully removed
+                  value:
+                    reviewId: REV-0005
+                    status: removed
+                    message: Review has been removed by a moderator
+        '400':
+          description: reviewId query parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                MissingReviewId:
+                  summary: reviewId not supplied
+                  value:
+                    code: BAD_REQUEST
+                    message: "Query parameter 'reviewId' is required"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: No review found with the given ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                ReviewNotFound:
+                  summary: reviewId does not exist
+                  value:
+                    code: NOT_FOUND
+                    message: "Review 'REV-9999' does not exist"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - OAuth2:
+            - reviews:admin
+      x-policies:
+        - OAuth
+
+components:
+  # ── Schemas ────────────────────────────────────────────────────────────────
+  schemas:
+
+    Review:
+      type: object
+      description: A fully persisted customer review record.
+      required:
+        - reviewId
+        - sku
+        - userId
+        - rating
+        - body
+        - status
+        - createdAt
+      properties:
+        reviewId:
+          type: string
+          description: System-assigned unique identifier.
+          example: REV-0001
+        sku:
+          type: string
+          description: SKU of the reviewed product.
+          example: SKU-1001
+        userId:
+          type: string
+          description: ID of the user who submitted the review.
+          example: USR-9921
+        rating:
+          type: integer
+          description: Star rating — 1 (worst) to 5 (best).
+          minimum: 1
+          maximum: 5
+          example: 5
+        body:
+          type: string
+          description: Review text body.
+          example: These boots handled every trail I threw at them.
+        status:
+          type: string
+          description: Moderation status of the review.
+          enum:
+            - approved
+            - removed
+          example: approved
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of submission.
+          example: '2026-03-10T11:24:00Z'
+
+    ReviewInput:
+      type: object
+      description: >
+        Payload for submitting a new review. All four fields are required
+        and validated server-side before persistence.
+      required:
+        - sku
+        - userId
+        - rating
+        - body
+      properties:
+        sku:
+          type: string
+          description: >
+            SKU of the product being reviewed. Must exist in the product
+            catalog — validated against the catalog service.
+          example: SKU-1001
+        userId:
+          type: string
+          description: ID of the submitting user, taken from the OAuth token subject.
+          example: USR-9921
+        rating:
+          type: integer
+          description: Integer star rating between 1 and 5 (inclusive).
+          minimum: 1
+          maximum: 5
+          example: 5
+        body:
+          type: string
+          description: Review text — must be non-empty after trimming whitespace.
+          minLength: 1
+          example: Best boots I have ever owned. Highly recommended for technical terrain.
+
+    ReviewModerationResponse:
+      type: object
+      description: Confirmation payload returned after a successful moderation deletion.
+      required:
+        - reviewId
+        - status
+        - message
+      properties:
+        reviewId:
+          type: string
+          description: ID of the review that was acted on.
+          example: REV-0005
+        status:
+          type: string
+          enum:
+            - removed
+          description: The new moderation status of the review.
+          example: removed
+        message:
+          type: string
+          description: Human-readable confirmation message.
+          example: Review has been removed by a moderator
+
+    ReviewSearchResponse:
+      type: object
+      description: Paginated list of reviews, optionally augmented with inventory data.
+      required:
+        - total
+        - page
+        - limit
+        - reviews
+      properties:
+        total:
+          type: integer
+          description: Total number of matching reviews across all pages.
+          example: 4
+        page:
+          type: integer
+          description: Current page number.
+          example: 1
+        limit:
+          type: integer
+          description: Page size used for this response.
+          example: 20
+        sku:
+          type: string
+          description: >
+            Echo of the `sku` query parameter, present only when a SKU
+            filter was supplied.
+          example: SKU-1001
+        inventory:
+          $ref: '#/components/schemas/InventoryHint'
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
+
+    InventoryHint:
+      type: object
+      description: >
+        Lightweight inventory hint included in GET responses when a `sku`
+        filter is supplied. Absent on unfiltered requests.
+      required:
+        - sku
+        - inStock
+      properties:
+        sku:
+          type: string
+          example: SKU-1001
+        inStock:
+          type: boolean
+          description: Whether the product has available stock at the time of the call.
+          example: true
+
+    Error:
+      type: object
+      description: Standard error envelope returned on all 4xx and 5xx responses.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code.
+          example: INVALID_PARAMETER
+        message:
+          type: string
+          description: Human-readable error description.
+          example: Query parameter 'q' is required
+        details:
+          type: array
+          description: >
+            Optional list of field-level validation messages, populated on
+            400 responses from the POST validate step.
+          items:
+            type: string
+          example:
+            - "'rating' must be an integer between 1 and 5"
+            - "'body' is required and must be a non-empty string"
+
+  # ── Reusable Responses ─────────────────────────────────────────────────────
+  responses:
+
+    BadRequest:
+      description: Invalid request parameters or failed validation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: BAD_REQUEST
+            message: Review validation failed
+            details:
+              - "'rating' must be an integer between 1 and 5"
+              - "'body' is required and must be a non-empty string"
+
+    Unauthorized:
+      description: Missing or invalid OAuth bearer token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: UNAUTHORIZED
+            message: Bearer token is missing or expired
+
+    NotFound:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: NOT_FOUND
+            message: SKU 'SKU-9999' does not exist
+
+    InternalServerError:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: INTERNAL_ERROR
+            message: An unexpected error occurred
+
+    ServiceUnavailable:
+      description: >
+        Downstream warehouse service is temporarily unavailable.
+        The `Retry-After` header indicates how many seconds to wait before
+        retrying — thrown by the gateway when the inventory lookup times out
+        rather than letting the raw timeout propagate.
+      headers:
+        Retry-After:
+          description: Number of seconds the client should wait before retrying.
+          schema:
+            type: integer
+            example: 30
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: SERVICE_UNAVAILABLE
+            message: Warehouse service is temporarily unavailable. Please retry.
+
+  # ── Security Schemes ───────────────────────────────────────────────────────
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.example.com/oauth/token
+          scopes:
+            reviews:read: Read and search approved reviews
+            reviews:write: Submit new reviews (POST)
+            reviews:admin: Moderate and remove reviews (DELETE)
+
+security:
+  - OAuth2:
+      - reviews:read
