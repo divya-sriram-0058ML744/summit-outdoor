@@ -1,0 +1,47 @@
+[
+  {
+    "reviewId": "REV-0001",
+    "sku": "SKU-1001",
+    "userId": "USR-9921",
+    "rating": 5,
+    "body": "These boots handled every trail I threw at them. Ankles stayed supported on loose scree and my feet stayed dry through two stream crossings. Worth every rupee.",
+    "status": "approved",
+    "createdAt": "2026-03-10T11:24:00Z"
+  },
+  {
+    "reviewId": "REV-0002",
+    "sku": "SKU-1001",
+    "userId": "USR-4412",
+    "rating": 4,
+    "body": "Solid boot, broke in faster than expected. Toe box is slightly narrow for wide feet — size up half a size.",
+    "status": "approved",
+    "createdAt": "2026-03-18T09:05:00Z"
+  },
+  {
+    "reviewId": "REV-0003",
+    "sku": "SKU-2045",
+    "userId": "USR-7703",
+    "rating": 5,
+    "body": "Best hiking socks I've owned. No blisters on a 3-day trek. The cushioning on the heel is perfect.",
+    "status": "approved",
+    "createdAt": "2026-04-01T14:30:00Z"
+  },
+  {
+    "reviewId": "REV-0004",
+    "sku": "SKU-3310",
+    "userId": "USR-1155",
+    "rating": 3,
+    "body": "Gaiters fit well but the velcro started peeling after a few uses. Customer support was responsive though.",
+    "status": "approved",
+    "createdAt": "2026-04-05T07:48:00Z"
+  },
+  {
+    "reviewId": "REV-0005",
+    "sku": "SKU-2045",
+    "userId": "USR-8820",
+    "rating": 1,
+    "body": "SPAM SPAM BUY CHEAP GEAR AT EXAMPLE.COM",
+    "status": "removed",
+    "createdAt": "2026-04-10T22:15:00Z"
+  }
+]
