@@ -219,18 +219,6 @@ paths:
                         createdAt: '2026-03-10T11:24:00Z'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '401':
-          description: Missing or invalid OAuth bearer token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                MissingToken:
-                  summary: No Authorization header
-                  value:
-                    code: UNAUTHORIZED
-                    message: Bearer token is missing or expired
         '404':
           description: SKU not found in the product catalog
           content:
@@ -261,11 +249,7 @@ paths:
                   value:
                     code: SERVICE_UNAVAILABLE
                     message: Warehouse service is temporarily unavailable. Please retry.
-      security:
-        - OAuth2:
-            - reviews:read
       x-policies:
-        - OAuth
         - Cache
 
     # ── POST ─────────────────────────────────────────────────────────────────
@@ -372,15 +356,9 @@ paths:
                     message: Review validation failed
                     details:
                       - "SKU 'SKU-9999' does not exist in the product catalog"
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '500':
           $ref: '#/components/responses/InternalServerError'
-      security:
-        - OAuth2:
-            - reviews:write
       x-policies:
-        - OAuth
         - Parse
         - Validate
 
@@ -436,8 +414,6 @@ paths:
                   value:
                     code: BAD_REQUEST
                     message: "Query parameter 'reviewId' is required"
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '404':
           description: No review found with the given ID
           content:
@@ -452,11 +428,7 @@ paths:
                     message: "Review 'REV-9999' does not exist"
         '500':
           $ref: '#/components/responses/InternalServerError'
-      security:
-        - OAuth2:
-            - reviews:admin
-      x-policies:
-        - OAuth
+      x-policies: []
 
 components:
   # ── Schemas ────────────────────────────────────────────────────────────────
@@ -658,16 +630,6 @@ components:
               - "'rating' must be an integer between 1 and 5"
               - "'body' is required and must be a non-empty string"
 
-    Unauthorized:
-      description: Missing or invalid OAuth bearer token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: UNAUTHORIZED
-            message: Bearer token is missing or expired
-
     NotFound:
       description: The requested resource was not found
       content:
@@ -709,17 +671,14 @@ components:
             message: Warehouse service is temporarily unavailable. Please retry.
 
   # ── Security Schemes ───────────────────────────────────────────────────────
-  securitySchemes:
-    OAuth2:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: https://auth.example.com/oauth/token
-          scopes:
-            reviews:read: Read and search approved reviews
-            reviews:write: Submit new reviews (POST)
-            reviews:admin: Moderate and remove reviews (DELETE)
-
-security:
-  - OAuth2:
-      - reviews:read
+  # OAuth2 will be added here once the server supports it.
+  # securitySchemes:
+  #   OAuth2:
+  #     type: oauth2
+  #     flows:
+  #       clientCredentials:
+  #         tokenUrl: https://auth.example.com/oauth/token
+  #         scopes:
+  #           reviews:read:  Read and search approved reviews
+  #           reviews:write: Submit new reviews (POST)
+  #           reviews:admin: Moderate and remove reviews (DELETE)
