@@ -1,5 +1,5 @@
 /**
- * /v2/store/reviews
+ * /store/reviews
  *
  * Multi-operation endpoint for reading, submitting, and moderating
  * customer gear reviews.
