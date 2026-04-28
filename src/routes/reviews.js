@@ -6,6 +6,11 @@
  *
  * Auth: none enforced at the server level for now — OAuth (reviews:read,
  *       reviews:write, reviews:admin scopes) will be added later.
+ *
+ * NOTE: Uses an in-memory store seeded from data/reviews.json at startup.
+ *       Writes (POST / DELETE) mutate the in-memory array only — no disk
+ *       writes — so data resets on every cold start / redeploy. This is
+ *       intentional for Vercel's read-only /var/task filesystem.
  */
 
 const express = require('express');
@@ -14,14 +19,21 @@ const fs = require('fs');
 
 const router = express.Router();
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+// ─── in-memory store ──────────────────────────────────────────────────────────
 
-const REVIEWS_FILE = path.join(__dirname, '../../data/reviews.json');
+const REVIEWS_FILE  = path.join(__dirname, '../../data/reviews.json');
 const PRODUCTS_FILE = path.join(__dirname, '../../data/products.json');
 
-function loadReviews() {
-  return JSON.parse(fs.readFileSync(REVIEWS_FILE, 'utf8'));
+// Seed once at module load time. fs.readFileSync is fine here — /var/task is
+// readable, only writes are blocked on Vercel.
+let reviews = [];
+try {
+  reviews = JSON.parse(fs.readFileSync(REVIEWS_FILE, 'utf8'));
+} catch {
+  reviews = [];
 }
+
+// ─── helpers ──────────────────────────────────────────────────────────────────
 
 function loadProducts() {
   try {
@@ -60,11 +72,10 @@ router.route('/reviews')
   .get(async (req, res) => {
     const { sku, userId, status = 'approved', page = 1, limit = 20 } = req.query;
 
-    let reviews = loadReviews();
+    let filtered = reviews.filter((r) => r.status === status);
 
-    if (sku)    reviews = reviews.filter((r) => r.sku === sku);
-    if (userId) reviews = reviews.filter((r) => r.userId === userId);
-    reviews = reviews.filter((r) => r.status === status);
+    if (sku)    filtered = filtered.filter((r) => r.sku === sku);
+    if (userId) filtered = filtered.filter((r) => r.userId === userId);
 
     // try/throw – inventory lookup when a SKU filter is present.
     // If the SKU resolves in the catalog but the warehouse service times out,
@@ -83,12 +94,12 @@ router.route('/reviews')
         const pageSize = parseInt(limit, 10);
         const start    = (pageNum - 1) * pageSize;
         return res.status(200).json({
-          total: reviews.length,
+          total: filtered.length,
           page:  pageNum,
           limit: pageSize,
           sku,
           inventory,
-          reviews: reviews.slice(start, start + pageSize),
+          reviews: filtered.slice(start, start + pageSize),
         });
       } catch (err) {
         if (err.code === 'WAREHOUSE_TIMEOUT') {
@@ -107,10 +118,10 @@ router.route('/reviews')
     const start    = (pageNum - 1) * pageSize;
 
     return res.status(200).json({
-      total: reviews.length,
+      total: filtered.length,
       page:  pageNum,
       limit: pageSize,
-      reviews: reviews.slice(start, start + pageSize),
+      reviews: filtered.slice(start, start + pageSize),
     });
   })
 
@@ -154,7 +165,6 @@ router.route('/reviews')
       });
     }
 
-    const reviews = loadReviews();
     const newReview = {
       reviewId:  `REV-${String(reviews.length + 1).padStart(4, '0')}`,
       sku,
@@ -164,8 +174,9 @@ router.route('/reviews')
       status:    'approved',
       createdAt: new Date().toISOString(),
     };
+
+    // ── in-memory write (replaces fs.writeFileSync) ──────────────────────────
     reviews.push(newReview);
-    fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2));
 
     return res.status(201).json(newReview);
   })
@@ -181,7 +192,6 @@ router.route('/reviews')
       });
     }
 
-    const reviews = loadReviews();
     const idx = reviews.findIndex((r) => r.reviewId === reviewId);
 
     if (idx === -1) {
@@ -191,8 +201,8 @@ router.route('/reviews')
       });
     }
 
-    reviews[idx].status = 'removed';
-    fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2));
+    // ── in-memory write (replaces fs.writeFileSync) ──────────────────────────
+    reviews[idx] = { ...reviews[idx], status: 'removed' };
 
     return res.status(200).json({
       reviewId,
